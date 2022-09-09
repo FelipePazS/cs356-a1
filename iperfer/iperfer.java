@@ -30,6 +30,10 @@ public class iperfer {
             else if (arg.equals("-p")){
                 if (i + 1 < args.length){
                     port = Integer.parseInt(args[i + 1]);
+                    if (port < 1024 || port > 65535){
+                        System.out.println(error_message);
+                        System.exit(0);
+                    }
                     i += 2;
                 } else {
                     System.out.println(error_message);
@@ -47,7 +51,7 @@ public class iperfer {
             }
             else if (arg.equals("-t")){
                 if (i + 1 < args.length){
-                    host = args[i + 1];
+                    time = Integer.parseInt(args[i + 1]);
                     i += 2;
                 } else {
                     System.out.println(error_message);
@@ -59,7 +63,6 @@ public class iperfer {
                 System.exit(0);
             }
         }
-
         if (is_client){
             System.out.println("Connecting to " + host + "@ port " + port);
 
