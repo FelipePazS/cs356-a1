@@ -1,4 +1,3 @@
-import org.apache.commons.cli.*;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.DataInputStream;
@@ -10,71 +9,60 @@ import java.net.*;
 public class iperfer {
     static String error_message = "Error: invalid inputs";
     public static void main(String[] args) throws IOException {
-
-        // process your command line args
-        // if you want to use the apache commons library
-        Options options = new Options();
-
-        Option c = Option.builder("c")
-        .argName("client_mode")
-        .desc("runs iperfer in client mode").build();
-        options.addOption(c);
-
-        Option s = Option.builder("s").longOpt("server")
-        .argName("server mode")
-        .desc("runs iperfer in server mode").build();
-        options.addOption(s);
-
-        Option h = Option.builder("h")
-        .argName("host")
-        .hasArg()
-        .desc("hostname or IP address of the iperf server which will consume data").build();
-        options.addOption(h);
-
-        Option p = Option.builder("p")
-        .argName("port")
-        .hasArg()
-        .desc(" the port on which the host is waiting to consume data").build();
-        options.addOption(p);
-
-        Option t = Option.builder("t")
-        .argName("time")
-        .hasArg()
-        .desc(" duration in seconds for which data should be generated").build();
-        options.addOption(t);
-
-
-        // Parse comand line arguments and validate values when needed
-        CommandLine cmd = null;
-        CommandLineParser parser = new DefaultParser();
-        try {
-            cmd = parser.parse(options, args);
-        } catch (ParseException e) {
-            System.out.println(error_message);
-            System.exit(0);
-        }
-
-        String host = cmd.getOptionValue("h");
-
-        String port_string = cmd.getOptionValue("p");
-        int port = Integer.parseInt(port_string);
-        if (port < 1024 || port > 65535){
-            System.out.println("Error: port number must be in the range 1024 to 65535");
-            System.exit(0);
-        }
-
-        String time_string = cmd.getOptionValue("t");
+        //parse command line arguments
+        boolean is_client = false;
+        boolean is_server = false;
+        int i = 0;
+        int port = 0;
+        String host = "";
         int time = 0;
-        if (time_string != null){
-            time = Integer.parseInt(time_string);
-        }
-        if (time > 600){
-            System.out.println("Error: time must not exceed 10 minutes");
-            System.exit(0);
+
+        while (i < args.length){
+            String arg = args[i];
+            if (arg.equals("-c")){
+                is_client = true;
+                i++;
+            } 
+            else if (arg.equals("-s")){
+                is_server = true;
+                i++;
+            }
+            else if (arg.equals("-p")){
+                if (i + 1 < args.length){
+                    port = Integer.parseInt(args[i + 1]);
+                    i += 2;
+                } else {
+                    System.out.println("1");
+                    System.out.println(error_message);
+                    System.exit(0);
+                }
+            }
+            else if (arg.equals("-h")){
+                if (i + 1 < args.length){
+                    host = args[i + 1];
+                    i += 2;
+                } else {
+                    System.out.println(error_message);
+                    System.exit(0);
+                }
+            }
+            else if (arg.equals("-t")){
+                if (i + 1 < args.length){
+                    host = args[i + 1];
+                    i += 2;
+                } else {
+                    System.out.println("2");
+                    System.out.println(error_message);
+                    System.exit(0);
+                }
+            }
+            else {
+                System.out.println(error_message);
+                System.exit(0);
+            }
         }
 
-
-        if (cmd.hasOption("c")){
+        if (is_client){
             System.out.println("Connecting to " + host + "@ port " + port);
 
             Socket clientSocket = new Socket(host, port);
@@ -86,7 +74,7 @@ public class iperfer {
             int total_bytes_sent = 0;
             int start_time = ((int) System.currentTimeMillis() / 1000);
             while (((int) System.currentTimeMillis() / 1000) < (start_time + time) ){
-                for (int i = 0; i < 250; i ++){
+                for (int x = 0; x < 250; x ++){
                     out.writeInt(0);
                 }
                 writer.println();
@@ -98,7 +86,7 @@ public class iperfer {
             float rate = (8 * ((float)KB_sent / 1000)) / elapsed_time;
             System.out.println("sent=" + KB_sent + " KB" + " rate=" + rate + " Mbps");
             clientSocket.close();
-        } else if (cmd.hasOption("s")){
+        } else if (is_server){
             ServerSocket serverSocket = new ServerSocket(port);
 
             System.out.println("Watiting for client connections on port " + port);
@@ -112,7 +100,7 @@ public class iperfer {
             int character_read = 0;
             int start_time = ((int) System.currentTimeMillis() / 1000);
             while (character_read != -1){
-                for (int i = 0; i < 1000; i ++){
+                for (int y = 0; y < 1000; y ++){
                     character_read = reader.read();
                     if (character_read == -1){
                         continue;
