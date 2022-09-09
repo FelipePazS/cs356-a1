@@ -32,7 +32,6 @@ public class iperfer {
                     port = Integer.parseInt(args[i + 1]);
                     i += 2;
                 } else {
-                    System.out.println("1");
                     System.out.println(error_message);
                     System.exit(0);
                 }
@@ -51,7 +50,6 @@ public class iperfer {
                     host = args[i + 1];
                     i += 2;
                 } else {
-                    System.out.println("2");
                     System.out.println(error_message);
                     System.exit(0);
                 }
