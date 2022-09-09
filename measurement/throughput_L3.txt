@@ -1,0 +1,4 @@
+Connecting to 10.0.0.4@ port 8989
+Connection established.
+
+sent=35188 KB rate=9.383467 Mbps

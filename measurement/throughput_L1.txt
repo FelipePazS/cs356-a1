@@ -1,0 +1,4 @@
+Watiting for client connections on port 8989
+Connection established.
+
+received=34566 KB rate=9.217601 Mbps
